@@ -1,0 +1,34 @@
+<html>
+<head>
+<script type="text/javascript" src="AppAJAXJS/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+<script>
+	var jsonData;
+    //var songData1 = { "SongID": "3612742", "SongName": "My heart will go on", "Singer": "Dion", "Album": "Titanic", "Arranger": "" };
+    var songData1 = { "SongID": "2480672", "SongName": "Long Day", "Singer": "Tyler James", "Album": "The Unlikely Lad", "Arranger": "" };
+    var songData = JSON.stringify(songData1);
+
+    $.ajax({
+        //url: "http://emartctg.com/contents/",
+		url: "http://belief-it.com/lyricapi/",
+        type: 'POST',
+        crossDomain: true,
+        data: { "getSongData": songData },
+		//data: { "getSongData222": songData },
+        dataType: 'json',
+        async:false,
+        success: function (response, textStatus, jqXHR) {
+            jsonData= response;
+			//document.write(jsonData);
+			alert(JSON.stringify(jsonData));
+			document.write(JSON.stringify(jsonData));
+        },
+        error: function (responseData, textStatus, errorThrown) {
+            console.warn(responseData, textStatus, errorThrown);
+            //alert('CORS failed - ' + textStatus);
+        }
+    });
+</script>
+</body>
+</html>

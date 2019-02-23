@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Auto Format Text</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.16/clipboard.min.js"></script>
+	<script src="js/txtformat.min.js"></script>
+	<style>
+		body{   
+		   background: url('background.jpg') no-repeat center center fixed;
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		
+		<div class="row">
+			<div class="col-md-4">
+				<h2 align="center" style="color:green"><i>Text Formatting Tool</i></h2>
+			</div>
+			<div class="col-md-3">
+				<input class="btn" type="button" style="background-color:#1e3327; color:#e8edea;" onclick="clearContent()" value="Clear TextBox">			
+				<input class="btn copy-button" data-clipboard-action="copy" data-clipboard-target="#output" type="button" style="background-color:#1e3327; color:#e8edea;" value="Copy to Clipboard">
+			</div>
+			<div class="col-md-3">
+				<input class="form-control" id="songID" placeholder="Song ID" onkeyup="btnEnabler()"></input>
+			</div>
+			<div class="col-md-2">
+				<input class="btn" type="button" id="saveButton" style="background-color:#1e3327; color:#e8edea;" value="Save Text" onclick="downloadTxt()" disabled>
+			</div>
+		</div>
+		<form>		  
+			<div class="col-md-6">
+				<div class="form-group" >
+					<!-- <h5 align="center" ><b><i>Paste Text Here</i></b></h5>-->
+					<textarea style="background:#D7BDE2  " class="form-control input-lg" id="lyric" placeholder="..texts to format" rows='22' onkeyup="formatLyric()"></textarea>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<!-- <h5 align="center"><b><i>Generated Output</i></b></h5> -->
+					<textarea style="background:#AED6F1  " class="form-control input-lg" id="output" placeholder="..formatted texts appear here" type="textbox" rows='22'></textarea>
+				</div>
+			</div>	  
+		</form>
+	</div>
+</body>
+<script>
+	var clipboard = new Clipboard('.copy-button', {
+	   target: function() {
+		   return document.querySelector('#output');
+	   }
+	});
+</script>
+</html>

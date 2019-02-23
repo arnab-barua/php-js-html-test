@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Auto Format Text</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.16/clipboard.min.js"></script>
+	<!-- <script src="js/txtformat.min.js"></script> -->
+	<style>
+		body{   
+		   background: url('background.jpg') no-repeat center center fixed;
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		
+		<div class="row">
+			<div class="col-md-4">
+				<h2 align="center" style="color:green"><i>Text Formatting Tool</i></h2>
+			</div>
+			<div class="col-md-3">
+				<input class="btn" type="button" style="background-color:#1e3327; color:#e8edea;" onclick="clearContent()" value="Clear TextBox">			
+				<input class="btn copy-button" data-clipboard-action="copy" data-clipboard-target="#output" type="button" style="background-color:#1e3327; color:#e8edea;" value="Copy to Clipboard">
+			</div>
+			<div class="col-md-3">
+				<input class="form-control" id="songID" placeholder="Song ID" onkeyup="btnEnabler()"></input>
+			</div>
+			<div class="col-md-2">
+				<input class="btn" type="button" id="saveButton" style="background-color:#1e3327; color:#e8edea;" value="Save Text" onclick="downloadTxt()" disabled>
+			</div>
+		</div>
+		<form>		  
+			<div class="col-md-6">
+				<div class="form-group" >
+					<!-- <h5 align="center" ><b><i>Paste Text Here</i></b></h5>-->
+					<textarea style="background:#D7BDE2;" class="form-control input-lg" id="lyric" placeholder="..texts to format" rows='21' onkeyup="formatLyric()"></textarea>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<!-- <h5 align="center"><b><i>Generated Output</i></b></h5> onkeyup="formatOutputLyric()"-->
+					<textarea style="background:#AED6F1;" class="form-control input-lg" id="output" placeholder="..formatted texts appear here" type="textbox" rows='21'></textarea>
+				
+				<div align="center">
+				<input class="btn btn-danger btn-lg" type="button" id="saveButton"  value="Update Output" onclick="formatOutputLyric()" >
+				</div>
+				</div>
+			</div>	  
+		</form>
+	</div>
+</body>
+<script>
+	var clipboard = new Clipboard('.copy-button', {
+	   target: function() {
+		   return document.querySelector('#output');
+	   }
+	});
+	function btnEnabler()
+	{
+		var songIdTxt = document.getElementById("songID").value;
+		if(songIdTxt!="")
+		{
+			document.getElementById("saveButton").disabled=false;
+		}
+		else
+		{
+			document.getElementById("saveButton").disabled=true;
+		}
+	}
+	function clearContent()
+	{
+		document.getElementById("lyric").value = "";
+		document.getElementById("output").value = "";
+		document.getElementById("songID").value = "";
+		btnEnabler();
+		document.getElementById("lyric").disabled = false;
+	}
+	function downloadTxt()
+	{
+		var textToSave = document.getElementById("output").value;
+		if(textToSave!='')
+		{
+			var textToSaveAsBlob = new Blob([textToSave], {type:'text/plain',endings: 'native'});
+			var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+			var fileNameToSaveAs = document.getElementById("songID").value;
+		 
+			var downloadLink = document.createElement("a");
+			downloadLink.download = fileNameToSaveAs;
+			downloadLink.innerHTML = "Download File";
+			downloadLink.href = textToSaveAsURL;
+			downloadLink.onclick = destroyClickedElement;
+			downloadLink.style.display = "none";
+			document.body.appendChild(downloadLink);
+		 
+			downloadLink.click();
+		}
+		else
+		{
+			alert("Nothing to save");
+		}
+		
+	}
+	function destroyClickedElement(event)
+	{
+		document.body.removeChild(event.target);
+	}
+	
+	function toCapitalCase(str)
+	{
+		var patt = /\n/igm;
+		while (match = patt.exec(str)) 
+		{
+		  var pos = match.index;
+		  var str = str.slice(0,pos+1) + str.charAt(pos+1).toUpperCase() + str.substr(pos+2);//.toLowerCase();
+		}
+		return str;
+	}
+	
+	function shortiFy(str)
+	{
+		var len = str.length;
+		var count = 0;
+		for(var i=0;i<str.length;i++)
+		{
+			if(str.charAt(i) == '\n')
+				count=0;
+			else if(str.charAt(i)== ' ')
+				count++;
+			else{
+			}
+			
+			if(count == 10)
+			{
+				str = str.slice(0,i) + '\n' + str.substr(i+1);
+				count = 0;
+				i++;
+			}
+			
+		}
+		return str;		
+	}
+	
+	function toTitleCase(str)
+	{
+		return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+	}
+	
+	function formatLyric()
+	{
+		document.getElementById("output").value = '';
+		var raw = document.getElementById("lyric").value;
+		raw = raw.toLowerCase();
+		
+		raw = raw.replace(/ i /gm, ' I ');
+		raw = raw.replace(/ i\n/gm, ' I\n');
+		raw = raw.replace(/ i'/gm, " I'");
+		raw = raw.replace(/[,.;?!(){}–\[\]\\\/\-]/igm,' ');
+		raw = raw.replace(/…/igm,' ');
+		raw = raw.replace(/[|“”："*><\^=:_@#$%~\+\t]/igm,'');
+		//raw = raw.replace(/[,.|;"?*><:_!@#$%\\~\/`\+\-]/gi,'');
+		
+		//raw = shortiFy(raw);
+		raw = raw.replace(/\n\t+/igm, '\n');
+		raw = raw.replace(/\n+/igm, '\n');
+		raw = raw.replace(/\n +/igm, '\n');
+		raw = raw.replace(/\t+/igm, ' ');
+		raw = raw.replace(/ +\n+/igm, '\n');
+		//raw = raw.replace(/[\[\]{}()]/g, ' ');
+		raw = raw.replace(/ +/igm, ' ');
+		raw = shortiFy(raw);
+		
+		
+		while(raw.charAt(0)=='\n'||raw.charAt(0)==' ')
+		{
+			raw = raw.substr(1);
+		}
+		raw = raw.charAt(0).toUpperCase()+raw.substr(1).toLowerCase();
+		raw = toCapitalCase(raw);
+		raw = raw.replace(/ i /gm, ' I ');
+		raw = raw.replace(/ i\n/gm, ' I\n');
+		raw = raw.replace(/ i'/gm, " I'");
+		
+		if(document.getElementById("lyric").value != '')
+		{
+			document.getElementById("output").value = 'Written by：\n'+raw;
+		}
+		else
+		{
+			document.getElementById("output").value = '';
+		}
+		document.getElementById("lyric").disabled = true;		
+	}
+	function formatOutputLyric()
+	{
+		var raw = document.getElementById("output").value;
+		document.getElementById("output").value = '';
+		raw = raw.replace(/ i /gm, ' I ');
+		raw = raw.replace(/ i\n/gm, ' I\n');
+		raw = raw.replace(/ i'/gm, " I'");
+		
+		raw = raw.replace(/\n\t+/igm, '\n');
+		raw = raw.replace(/\n +/igm, '\n');
+		raw = raw.replace(/\t+/igm, ' ');
+		
+		raw = raw.replace(/ +/igm, ' ');
+		raw = shortiFy(raw);
+		raw = raw.replace(/\n+/igm, '\n');
+		
+		while(raw.charAt(0)=='\n'||raw.charAt(0)==' ')
+		{
+			raw = raw.substr(1);
+		}
+		raw = raw.charAt(0).toUpperCase()+raw.substr(1);
+		raw = raw.replace(/ i /gm, ' I ');
+		raw = raw.replace(/ i\n/gm, ' I\n');
+		raw = raw.replace(/ i'/gm, " I'");
+		raw = toCapitalCase(raw);
+		document.getElementById("output").value = raw;
+			
+	}
+</script>
+</html>
